@@ -1,0 +1,98 @@
+# coding=utf8
+'''
+Created on 2024年1月3日
+
+@author: Xie
+'''
+        # information diffusion process
+        for n in aware_list:
+            if g1.nodes[n]['as'] == 'A':
+                nbs = g1.neighbors(n)
+                for nb in nbs:
+                    if g1.nodes[nb]['is'] == 'U' and g1.nodes[nb]['as'] == 'A' \
+                            and rand.random() < 1 - (1 - lmd1) ** (d1 * num1 / 1000):
+                        g1.nodes[nb]['is'] = 'A'
+                        num1 += 1
+                        num3 += 1
+
+        for n in aware_list:
+            if g1.nodes[n]['as'] == 'A':
+                nbs = g1.neighbors(n)
+                for nb in nbs:
+                    if g1.nodes[nb]['is'] == 'U' and g1.nodes[nb]['as'] == 'D' \
+                            and rand.random() < 1 / 2 * (1 - (1 - lmd1) ** (d1 * num3 / 1000)):
+                        g1.nodes[nb]['is'] = 'A'
+                        num1 += 1
+
+            if g1.nodes[n]['as'] == 'D':
+                nbs = g1.neighbors(n)
+                for nb in nbs:
+                    if g1.nodes[nb]['is'] == 'U' and g1.nodes[nb]['as'] == 'A' and g1.nodes[nb]['as'] == 'A' \
+                            and rand.random() < 1/2 * (1 - (1 - lmd1) ** (d1 * num1 / 1000)):
+                        g1.nodes[nb]['is'] = 'A'
+                        num1 += 1
+                        num3 += 1
+
+        # epidemic transmission process
+        num4 = random.randint(0, k1)
+        num5 = random.randint(0, k2)
+        for n in infect_list:
+            if g2.nodes[n]['as'] == 'M':
+                nbs = g2.neighbors(n)
+                for nb in nbs:
+                    if g2.nodes[nb]['is'] == 'S' and g1.nodes[nb]['is'] == 'U' and g2.nodes[nb]['as'] == 'M'\
+                            and rand.random() < lmd2:
+                        g2.nodes[nb]['is'] = 'I'
+                        g1.nodes[nb]['is'] = 'A'
+                        num2 += 1
+                        num1 += 1
+                    #print(num2)
+
+                    if g2.nodes[nb]['is'] == 'S' and g1.nodes[nb]['is'] == 'U' and g2.nodes[nb]['as'] == 'N' \
+                            and rand.random() < 1/2 * activity2 * lmd2:
+                        g2.nodes[nb]['is'] = 'I'
+                        g1.nodes[nb]['is'] = 'A'
+                        num2 += 1
+                        num1 += 1
+                    #print(num2)
+
+
+                    if g2.nodes[nb]['is'] == 'S' and g2.nodes[nb]['as'] == 'M':
+                        if g1.nodes[nb]['is'] == 'A' and g1.nodes[nb]['as'] == 'A':
+                            if rand.random() < ((1-p) ** (num4 - 1)) * (1 - fai) * lmd2:
+                                g2.nodes[nb]['is'] = 'I'
+                                num2 += 1
+                    #print(num2)
+
+                    if g2.nodes[nb]['is'] == 'S' and g2.nodes[nb]['as'] == 'M':
+                        if g1.nodes[nb]['is'] == 'A' and g1.nodes[nb]['as'] == 'D':
+                            if rand.random() < ((1-p) ** (num5 - 1)) * (1 - fai) * lmd2:
+                                g2.nodes[nb]['is'] = 'I'
+                                num2 += 1
+
+
+                    #print(num2)
+
+            if g2.nodes[n]['as'] == 'N': #active and infected neighbor
+                nbs = g2.neighbors(n)
+                for nb in nbs:
+                    if g2.nodes[nb]['is'] == 'S' and g1.nodes[nb]['is'] == 'U' and g2.nodes[nb]['as'] == 'M' \
+                            and rand.random() < 1/2 * lmd2:
+                        g2.nodes[nb]['is'] = 'I'
+                        g1.nodes[nb]['is'] = 'A'
+                        num2 += 1
+                        num1 += 1
+                    if g2.nodes[nb]['is'] == 'S' and g2.nodes[nb]['as'] == 'M':
+                        if g1.nodes[nb]['is'] == 'A' and g1.nodes[nb]['as'] == 'A':
+                            if rand.random() < ((1-p) ** (num4 - 1)) * (1 - fai) * lmd2:
+                                g2.nodes[nb]['is'] = 'I'
+                                num2 += 1
+                    if g2.nodes[nb]['is'] == 'S' and g2.nodes[nb]['as'] == 'M':
+                        if g1.nodes[nb]['is'] == 'A' and g1.nodes[nb]['as'] == 'D':
+                            if rand.random() < ((1-p) ** (num5 - 1)) * (1 - fai) * lmd2:
+                                g2.nodes[nb]['is'] = 'I'
+                                num2 += 1
+
+        self._current_a_num = num1
+        self._current_i_num = num2
+
